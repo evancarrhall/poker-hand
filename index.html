@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+
+    <style>
+        body { }
+
+        .anchor {
+            width: 1px;
+            height: 1px;
+            position: relative;
+        }
+        .card {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 351px;
+        }
+
+        .depth-anchor {
+            position: absolute;
+            height: 374.7px;
+            width: 229.8px;
+            top: 5px;
+            right: 6px;
+            overflow: hidden;
+        }
+
+        .deck-depth {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 374.7px;
+            transform: translate(28px, -28px);
+            transition: transform 0.5s ease;
+        }
+
+
+        .table {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 50vw;
+            height: 50vh;
+            background-color: #009444;        }
+    </style>
+
+    <body>
+
+        <div class="table">
+
+                <div class="anchor">
+                        
+                    <div class="depth-anchor">
+                        <div class="s">
+                            <img class="deck-depth" src="deck-depth.svg">
+                        </div>
+                        </div>
+                    <img class="card" src="red-card.svg">
+                                    
+                </div>
+
+        </div>
+
+        
+
+        <script>
+        
+            function setCards(percentageFull) {
+
+
+                var f = 28 * (1 - percentageFull);
+                document.querySelector('.deck-depth').style.transform = 'translate(' + f + 'px, -' + f + 'px)';
+            }
+
+            setCards(0.5);
+
+        </script>
+    </body>
+</html>
