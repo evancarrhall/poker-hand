@@ -8,21 +8,41 @@
     </head>
 
     <style>
-        body { }
-
-        .anchor {
-            width: 1px;
-            height: 1px;
-            position: relative;
+        body { 
+            /* background-color: #009444;  */
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
         }
+
+        .table {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: #009444;
+        }
+
+        .deck {
+            position: relative;
+            transform: scale(0.3);
+            cursor: pointer;
+        }
+
         .card {
-            position: absolute;
-            top: 0;
-            right: 0;
+            position: relative;
             height: 351px;
         }
 
-        .depth-anchor {
+         .top-card {
+            position: absolute;
+            top: 0;
+            right: 0;
+            transition: transform 200ms ease;
+        }
+
+        .deck-depth-container {
             position: absolute;
             height: 374.7px;
             width: 229.8px;
@@ -37,48 +57,45 @@
             top: 0;
             height: 374.7px;
             transform: translate(28px, -28px);
-            transition: transform 0.5s ease;
+            transition: transform 0.2s ease;
         }
-
-
-        .table {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 50vw;
-            height: 50vh;
-            background-color: #009444;        }
     </style>
 
     <body>
 
-        <div class="table">
-
-                <div class="anchor">
-                        
-                    <div class="depth-anchor">
-                        <div class="s">
-                            <img class="deck-depth" src="deck-depth.svg">
-                        </div>
-                        </div>
-                    <img class="card" src="red-card.svg">
-                                    
+        <div class="table"> 
+            <div class="deck">
+                <div class="deck-depth-container">
+                    <img class="deck-depth" src="deck-depth.svg">
                 </div>
-
+                <img class="card top-card" src="red-card.svg">
+                <img class="card" src="red-card.svg">
+            </div>
         </div>
 
         
 
         <script>
+
+            let cards = 0.5;
         
             function setCards(percentageFull) {
-
 
                 var f = 28 * (1 - percentageFull);
                 document.querySelector('.deck-depth').style.transform = 'translate(' + f + 'px, -' + f + 'px)';
             }
 
+            function dealCard() {
+
+                if (cards >= 0) {
+                    cards -= 0.05;
+                    setCards(cards);
+                };
+
+            }
+
             setCards(0.5);
+            document.querySelector('.deck').addEventListener('click', dealCard);
 
         </script>
     </body>
