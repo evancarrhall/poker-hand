@@ -17,20 +17,44 @@
 
         .table {
             display: flex;
-            justify-content: center;
-            align-items: center;
             width: 100%;
             height: 100%;
             background-color: #009444;
+            align-items: center;
+            justify-content: center;
         }
 
         .deck {
             position: relative;
-            transform: scale(0.3);
+            /* transform: scale(0.3); */
             cursor: pointer;
+            z-index: 2;
         }
 
-        .card {
+        @keyframes card-3d-rotate {
+            0% {
+                transform: rotate3d(0, 1, 0, 0turn) rotate(25deg) scale(0.3);
+            }
+            100% {
+                transform: rotate3d(0, 1, 0, 1turn) rotate(25deg) scale(0.3);
+            }
+        }
+
+        .card-3d-container {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            animation-duration: 3s;
+            animation-name: card-3d-rotate;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            transform-style: preserve-3d;
+            transform-origin: center;
+            transform: rotate(25deg) scale(0.3);
+            backface-visibility: hidden;
+        }
+
+        .card, .card-3d {
             position: relative;
             height: 351px;
         }
@@ -39,7 +63,19 @@
             position: absolute;
             top: 0;
             right: 0;
-            transition: transform 200ms ease;
+            bottom: 0;
+            left: 0;
+        }
+        .card-3d-bottom {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+            background-color: greenyellow;
+            border-radius: 10px;
         }
 
         .deck-depth-container {
@@ -59,17 +95,46 @@
             transform: translate(28px, -28px);
             transition: transform 0.2s ease;
         }
+
+        .hand {
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+        .hand-fingers {
+            position: absolute;
+            right: -85px;
+            top: 40px;
+            height: 310px;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .hand-thumb {
+            position: absolute;
+            right: 55px;
+            top: -60px;
+            height: 350px;
+            z-index: 3;
+            pointer-events: none;
+        }
     </style>
 
     <body>
 
         <div class="table"> 
-            <div class="deck">
-                <div class="deck-depth-container">
-                    <img class="deck-depth" src="deck-depth.svg">
+            <div class="card-3d-container">
+                <img class="card-3d" src="red-card.svg">
+                <div class="card-3d card-3d-bottom"></div>
+            </div>
+            <div class="hand">
+                <img class="hand-fingers" src="hand.svg">
+                <div class="deck">
+                    <div class="deck-depth-container">
+                        <img class="deck-depth" src="deck-depth.svg">
+                    </div>
+                    <img class="card" src="red-card.svg">
                 </div>
-                <img class="card top-card" src="red-card.svg">
-                <img class="card" src="red-card.svg">
+                <img class="hand-thumb" src="thumb.svg">
             </div>
         </div>
 
