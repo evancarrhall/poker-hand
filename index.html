@@ -99,6 +99,7 @@
         .hand {
             position: fixed;
             margin-top: auto;
+            transform: 
         }
         .hand-fingers {
             position: absolute;
@@ -167,11 +168,12 @@
                 const bottom = -300*percY + 50;
                 
                 const percX = 1 - (window.innerWidth - e.clientX) / window.innerWidth;
-                const rotate = (30*percX)-15;
+                const range = 14;
+                const rotate = range * percX - (range/2);
                 console.log(rotate);
 
                 hand.style.bottom =  bottom+'px';
-                hand.style.left = e.clientX + 'px';
+                hand.style.left = (e.clientX - 100) + 'px';
                 hand.style.transform = 'rotate('+rotate+'deg) scale(0.8)'
             }
 
