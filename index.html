@@ -13,6 +13,7 @@
             width: 100vw;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
 
         .table {
@@ -26,7 +27,6 @@
 
         .deck {
             position: relative;
-            /* transform: scale(0.3); */
             cursor: pointer;
             z-index: 2;
         }
@@ -59,7 +59,7 @@
             height: 351px;
         }
 
-         .top-card {
+        .top-card {
             position: absolute;
             top: 0;
             right: 0;
@@ -97,9 +97,8 @@
         }
 
         .hand {
-            position: relative;
-            top: 0;
-            left: 0;
+            position: fixed;
+            margin-top: auto;
         }
         .hand-fingers {
             position: absolute;
@@ -143,6 +142,9 @@
         <script>
 
             let cards = 0.5;
+            const deck = document.querySelector('.deck');
+            const table = document.querySelector('.table');
+            const hand = document.querySelector('.hand');
         
             function setCards(percentageFull) {
 
@@ -159,8 +161,23 @@
 
             }
 
+            function onMouseMove(e) {
+
+                const percY = 1 - (window.innerHeight - e.clientY) / window.innerHeight;
+                const bottom = -300*percY + 50;
+                
+                const percX = 1 - (window.innerWidth - e.clientX) / window.innerWidth;
+                const rotate = (30*percX)-15;
+                console.log(rotate);
+
+                hand.style.bottom =  bottom+'px';
+                hand.style.left = e.clientX + 'px';
+                hand.style.transform = 'rotate('+rotate+'deg) scale(0.8)'
+            }
+
             setCards(0.5);
-            document.querySelector('.deck').addEventListener('click', dealCard);
+            deck.addEventListener('click', dealCard);
+            table.addEventListener('mousemove', onMouseMove)
 
         </script>
     </body>
