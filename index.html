@@ -5,187 +5,40 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="styles.css">
     </head>
-
-    <style>
-        body { 
-            /* background-color: #009444;  */
-            width: 100vw;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .table {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            background-color: #009444;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-        }
-
-        .card-3d {
-            position: absolute;
-        }
-
-        .card-3d-bottom {
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            transform: rotateY(180deg);
-            backface-visibility: hidden;
-            background-color: greenyellow;
-            border-radius: 10px;
-        }
-
-        .card-3d-top {
-            height: 338px;
-            top: 0;
-            right: 0;
-        }
-
-        .card-3d-container {
-            /* overflow: hidden; */
-            position: fixed;
-            height: 315px;
-            width: 186px;
-            top: 30px;
-            left: 30px;
-            animation-duration: 3s;
-            animation-name: card-3d-rotate;
-            animation-iteration-count: infinite;
-            animation-timing-function: linear;
-            transform-style: preserve-3d;
-            transform-origin: center;
-            transform: rotate(25deg) scale(1);
-            backface-visibility: hidden;
-        }
-
-        @keyframes card-3d-rotate {
-            0% {
-                transform: rotate3d(0, 1, 0, 0turn) rotate(25deg) scale(1);
-            }
-            100% {
-                transform: rotate3d(0, 1, 0, 1turn) rotate(25deg) scale(0.6);
-            }
-        }
-
-        .deck {
-            position: absolute;
-            right: 70px;
-            top: 65px;
-            z-index: 2;
-        }
-
-        .deck-depth-container {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 300px;
-            height: 400px;
-            overflow: hidden;
-        }
-
-        .deck-depth {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 210px;
-            transition: all 0.2s ease;
-        }
-
-        .card {
-            position: relative;
-            height: 338px;
-        }
-
-        .hand {
-            position: fixed;
-            margin-top: auto;
-            width: 876px;
-        }
-        .hand-fingers {
-            position: absolute;
-            left: 0;
-            right: 0;
-            z-index: 1;
-            pointer-events: none;
-        }
-        .hand-thumb {
-            position: absolute;
-            z-index: 3;
-            pointer-events: none;
-        }
-    </style>
 
     <body>
 
         <div class="table"> 
-            <div class="card-3d-container">
+
+            <div class="table-overlay">
+                <div class="table-overlay-dealing-decks">
+                    <div class="table-overlay-dealing-deck"></div>
+                    <div class="table-overlay-dealing-deck"></div>
+                    <div class="table-overlay-dealing-deck"></div>
+                    <div class="table-overlay-dealing-deck"></div>
+                </div>
+            </div>
+
+            <!-- <div class="card-3d-container">
                 <img class="card-3d card-3d-top" src="card.svg">
                 <div class="card-3d card-3d-bottom"></div>
-            </div>
+            </div> -->
+
             <div class="hand">
                 <img class="hand-fingers" src="hand.svg">
-
                 <div class="deck">
                     <div class="deck-depth-container">
                         <img class="deck-depth" src="deck-depth.svg">
                     </div>
                     <img class="card" src="card.svg">
                 </div>
-
                 <img class="hand-thumb" src="thumb.svg">
             </div>
+
         </div>
 
-        
-
-        <script>
-
-            let cards = 1;
-            const deck = document.querySelector('.deck');
-            const table = document.querySelector('.table');
-            const hand = document.querySelector('.hand');
-            const deck_depth = document.querySelector('.deck-depth');
-        
-            function setCards(percentageFull) {
-
-                deck_depth.style.top = (28 * percentageFull - 28) + 'px';
-                deck_depth.style.right = (28 * percentageFull - 28) + 'px';
-            }
-
-            function dealCard() {
-
-                
-                if (cards >= 0) {
-                    cards -= 0.05;
-                    setCards(cards);
-                };
-
-            }
-
-            function onMouseMove(e) {
-
-                const percY = 1 - (window.innerHeight - e.clientY) / window.innerHeight;
-                const bottom = -300*percY + 500;
-                
-                const percX = 1 - (window.innerWidth - e.clientX) / window.innerWidth;
-                const range = 14;
-                const rotate = range * percX - (range/2);
-
-                hand.style.bottom =  bottom+'px';
-                hand.style.left = (e.clientX - 600) + 'px';
-                hand.style.transform = 'rotate('+rotate+'deg)'
-            }
-
-            setCards(cards);
-            // table.addEventListener('click', dealCard);
-            table.addEventListener('mousemove', onMouseMove)
-
-        </script>
+        <script src="app.js"></script>
     </body>
 </html>
