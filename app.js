@@ -16,51 +16,61 @@ function setCards(percentageFull) {
 
 function dealCard(e) {
     
-    if (cards >= 0) {
+    if (cards > 0) {
+
         cards -= 0.05;
         setCards(cards);
-    };
 
-    // position of card in hand
-    const first = card.getBoundingClientRect();
+        // position of card in hand
+        const first = card.getBoundingClientRect();
 
-    // create new card el
-    let new_card = document.createElement('IMG');
-    new_card.classList.add('dealt_card');
-    new_card.src = "card.svg";
+        // create new card el
+        let new_card = document.createElement('IMG');
+        new_card.classList.add('dealt_card');
+        new_card.src = "card.svg";
 
-    // place new card at cursor
-    new_card.style.top = `${e.clientY}px`;
-    new_card.style.left = `${e.clientX}px`;
+        const lastY = e.clientY - first.height/2;
+        const lastX = e.clientX - first.width/2;
 
-    // calculate delta between card and new card
-    const invertY = first.top - e.clientY;
-    const invertX = first.left - e.clientX;
+        // place new card at cursor
+        new_card.style.top = `${lastY}px`;
+        new_card.style.left = `${lastX}px`;
 
-    // move new card ontop of card in hand
-    new_card.style.transform = `translate(${invertX}px, ${invertY}px) rotate(${rotate}deg)`;
+        // calculate delta between card and new card
+        const invertY = first.top - lastY;
+        const invertX = first.left - lastX;
 
-    // put new card in dom
-    table.appendChild(new_card);
-    
-    // undo transform, causing new card to move to cursors position
-    requestAnimationFrame(() => {
-        // for some reason this raf does not wait for the next frame
-        // adding a second raf does wait for the next frame
-        requestAnimationFrame(() => {
-            new_card.style.transform = `rotate(${rotate}deg)`;
-        });
-    });
+        // move new card ontop of card in hand
+        new_card.style.transform = `translate(${invertX}px, ${invertY}px) rotate(${rotate}deg) scale(1)`;
 
-    new_card.addEventListener('transitionend', () => {
+        // put new card in dom
+        table.appendChild(new_card);
         
-    })
+        // undo transform, causing new card to move to cursors position
+        requestAnimationFrame(() => {
+            // for some reason this raf does not wait for the next frame
+            // adding a second raf does wait for the next frame
+            requestAnimationFrame(() => {
+                new_card.style.transform = `rotate(${rotate + Math.random() * 180}deg) scale(0.6)`;
+            });
+        });
+
+        new_card.addEventListener('transitionend', () => {
+            new_card.style.zIndex = '8';
+        }) 
+    }
+
+    else {
+        
+        deck.style.opacity = '0';
+    }
 }
 
 function onMouseMove(e) {
 
     const percY = 1 - (window.innerHeight - e.clientY) / window.innerHeight;
-    const bottom = -300*percY + 500;
+    const bottom = -300*percY + 300;
+    // const bottom = 200;
     
     const percX = 1 - (window.innerWidth - e.clientX) / window.innerWidth;
     const range = 14;

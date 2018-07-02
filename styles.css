@@ -99,6 +99,8 @@ body {
     position: fixed;
     margin-top: auto;
     width: 876px;
+    transform: scale(0.8);
+    z-index: 9;
 }
 .hand-fingers {
     position: absolute;
@@ -141,5 +143,6 @@ body {
 .dealt_card {
     position: absolute;
     height: 338px;
-    transition: transform 300ms linear;
+    transition: transform 500ms linear;
+    z-index: 10;
 }
