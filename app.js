@@ -1,25 +1,31 @@
-let cards = 1;
 const deck = document.querySelector('.deck');
 const table = document.querySelector('.table');
 const hand = document.querySelector('.hand');
 const deck_depth = document.querySelector('.deck-depth');
 const dealing_decks = document.querySelector('.table-overlay-dealing-decks');
 const card = document.querySelector('.card');
+const card_counter = document.querySelector('.card-counter');
 
 let rotate = 0;
+let cards = 52;
 
-function setCards(percentageFull) {
+function setCards(number) {
 
-    deck_depth.style.top = (28 * percentageFull - 28) + 'px';
-    deck_depth.style.right = (28 * percentageFull - 28) + 'px';
+    cards = number;
+
+    // calculate deck depth
+    deck_depth.style.top = (28 * (cards / 52) - 28) + 'px';
+    deck_depth.style.right = (28 * (cards / 52) - 28) + 'px';
+
+    // update card counter
+    card_counter.textContent = cards;
 }
 
 function dealCard(e) {
     
     if (cards > 0) {
 
-        cards -= 0.05;
-        setCards(cards);
+        setCards(cards - 1);
 
         // position of card in hand
         const first = card.getBoundingClientRect();
@@ -91,10 +97,8 @@ function setNumberOfPlayers(num) {
 
     for (let i = 0; i < num; i++) {
 
-        
-
         let deck = document.createElement('DIV');
-        deck.classList += 'table-overlay-dealing-deck';
+        deck.classList.add('table-overlay-dealing-deck');
         
         console.log(deck);
 
@@ -106,4 +110,4 @@ function setNumberOfPlayers(num) {
 
 setCards(cards);
 table.addEventListener('click', dealCard);
-table.addEventListener('mousemove', onMouseMove)
+table.addEventListener('mousemove', onMouseMove);

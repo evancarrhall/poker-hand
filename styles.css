@@ -146,3 +146,12 @@ body {
     transition: transform 500ms linear;
     z-index: 10;
 }
+.card-counter {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 34px;
+    color: rgba(0, 0, 0, 0.3);
+}
