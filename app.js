@@ -77,41 +77,12 @@ var view = {
                 }
             });
 
-            this.els.table.addEventListener('mousemove', e => {
-
-
-                const percY = 1 - (window.innerHeight - e.clientY) / window.innerHeight;
-                const top = window.innerHeight - (-300 * percY + 300);
-
-                const left = (e.clientX - 600);
-
-                const percX = 1 - (window.innerWidth - e.clientX) / window.innerWidth;
-                const rotationRange = 14;
-                rotate = rotationRange * percX - (rotationRange / 2);
-
-                controller.setHandPosition(top, left, rotate)
-            });
-
             this.render();
         },
 
         render() {
 
-            const numberOfCardsInHand = controller.getNumberOfCardsInHand();
-            const handPosition = controller.getHandPosition();
             const dealtCards = controller.getDealtCards();
-
-            // calculate deck depth
-            this.els.deck_depth.style.top = (28 * ( numberOfCardsInHand / 52) - 28) + 'px';
-            this.els.deck_depth.style.right = (28 * (numberOfCardsInHand / 52) - 28) + 'px';
-
-            // hide deck depth if there are no more  cards
-            if (numberOfCardsInHand <= 1) this.els.deck.style.opacity = '0';
-
-            // move and rotate hand
-            this.els.hand.style.top =  handPosition.top + 'px';
-            this.els.hand.style.left = handPosition.left + 'px';
-            this.els.hand.style.transform = 'rotate(' + handPosition.rotate + 'deg)';
 
             // throw any newly dealt cards
             for (let card of dealtCards) {
@@ -154,6 +125,50 @@ var view = {
                     });
                 }
             }
+        }
+    },
+
+    hand: {
+
+        els: {
+            table: document.querySelector('.table'),
+            deck: document.querySelector('.deck'),
+            hand: document.querySelector('.hand'),
+        },
+
+        init() {
+            
+            this.els.table.addEventListener('mousemove', e => {
+
+                const percY = 1 - (window.innerHeight - e.clientY) / window.innerHeight;
+                const top = window.innerHeight - (-300 * percY + 300);
+
+                const left = (e.clientX - 600);
+
+                const percX = 1 - (window.innerWidth - e.clientX) / window.innerWidth;
+                const rotationRange = 14;
+                rotate = rotationRange * percX - (rotationRange / 2);
+
+                controller.setHandPosition(top, left, rotate)
+            });
+        },
+
+        render() {
+
+            const numberOfCardsInHand = controller.getNumberOfCardsInHand();
+            const handPosition = controller.getHandPosition();
+
+            // calculate deck depth
+            this.els.deck_depth.style.top = (28 * ( numberOfCardsInHand / 52) - 28) + 'px';
+            this.els.deck_depth.style.right = (28 * (numberOfCardsInHand / 52) - 28) + 'px';
+
+            // hide deck depth if there are no more  cards
+            if (numberOfCardsInHand <= 1) this.els.deck.style.opacity = '0';
+
+            // move and rotate hand
+            this.els.hand.style.top =  handPosition.top + 'px';
+            this.els.hand.style.left = handPosition.left + 'px';
+            this.els.hand.style.transform = 'rotate(' + handPosition.rotate + 'deg)';
         }
     },
     
