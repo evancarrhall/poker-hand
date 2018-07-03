@@ -1,113 +1,198 @@
-const deck = document.querySelector('.deck');
-const table = document.querySelector('.table');
-const hand = document.querySelector('.hand');
-const deck_depth = document.querySelector('.deck-depth');
-const dealing_decks = document.querySelector('.table-overlay-dealing-decks');
-const card = document.querySelector('.card');
-const card_counter = document.querySelector('.card-counter');
+var model = {
+    numberOfCardsInHand: 52,
+    handPosition: { top: window.innerHeight, left: 0, rotate: 0 },
+    dealtCards: [],
+};
 
-let rotate = 0;
-let cards = 52;
+var controller = {
 
-function setCards(number) {
+    init() {
 
-    cards = number;
+        view.table.init();
+        view.cardCounter.init();
+    },
 
-    // calculate deck depth
-    deck_depth.style.top = (28 * (cards / 52) - 28) + 'px';
-    deck_depth.style.right = (28 * (cards / 52) - 28) + 'px';
+    getNumberOfCardsInHand() { return model.numberOfCardsInHand },
+    setNumberOfCardsInHand(numberOfCardsInHand = 52) {
 
-    // update card counter
-    card_counter.textContent = cards;
-}
+        numberOfCardsInHand = parseInt(numberOfCardsInHand);
 
-function dealCard(e) {
-    
-    if (cards > 0) {
+        if (numberOfCardsInHand > 52 || numberOfCardsInHand < 0) console.warn(`Expected a number between 0 and 52. Was given ${numberOfCardsInHand}`);
+        else {
+            model.numberOfCardsInHand = numberOfCardsInHand;
+            view.cardCounter.render();
+            view.table.render();
+        }
+    },
 
-        setCards(cards - 1);
+    getHandPosition() { return model.handPosition },
+    setHandPosition(top = 0, left = 0, rotate = 0) {
 
-        // position of card in hand
-        const first = card.getBoundingClientRect();
+        model.handPosition = { top, left, rotate };
+        view.table.render();      
+    },
+
+    getDealtCards() { return model.dealtCards },
+    dealCard(x, y) {
 
         // create new card el
         let new_card = document.createElement('IMG');
         new_card.classList.add('dealt_card');
         new_card.src = "card.svg";
 
-        const lastY = e.clientY - first.height/2;
-        const lastX = e.clientX - first.width/2;
-
-        // place new card at cursor
-        new_card.style.top = `${lastY}px`;
-        new_card.style.left = `${lastX}px`;
-
-        // calculate delta between card and new card
-        const invertY = first.top - lastY;
-        const invertX = first.left - lastX;
-
-        // move new card ontop of card in hand
-        new_card.style.transform = `translate(${invertX}px, ${invertY}px) rotate(${rotate}deg) scale(1)`;
-
-        // put new card in dom
-        table.appendChild(new_card);
-        
-        // undo transform, causing new card to move to cursors position
-        requestAnimationFrame(() => {
-            // for some reason this raf does not wait for the next frame
-            // adding a second raf does wait for the next frame
-            requestAnimationFrame(() => {
-                new_card.style.transform = `rotate(${rotate + Math.random() * 180}deg) scale(0.6)`;
-            });
+        model.dealtCards.push({
+            x: x,
+            y: y,
+            el: new_card,
+            isDealt: false
         });
 
-        new_card.addEventListener('transitionend', () => {
-            new_card.style.zIndex = '8';
-        }) 
-    }
-
-    else {
-        
-        deck.style.opacity = '0';
-    }
+        view.table.render();
+    },
 }
 
-function onMouseMove(e) {
+var view = {
 
-    const percY = 1 - (window.innerHeight - e.clientY) / window.innerHeight;
-    const bottom = -300*percY + 300;
-    // const bottom = 200;
+    table: {
+
+        els: {
+            deck: document.querySelector('.deck'),
+            hand: document.querySelector('.hand'),
+            deck_depth: document.querySelector('.deck-depth'),
+            dealing_decks: document.querySelector('.table-overlay-dealing-decks'),
+            card: document.querySelector('.card'),
+            table: document.querySelector('.table'),
+        },
+
+        init() {
+
+            this.els.table.addEventListener('click', e => {
+                
+                const numberOfCardsInHand = controller.getNumberOfCardsInHand();
+
+                if (numberOfCardsInHand > 0) {
+
+                    controller.setNumberOfCardsInHand(numberOfCardsInHand - 1);
+                    controller.dealCard(e.clientX, e.clientY, this.els.card.getBoundingClientRect());
+                }
+            });
+
+            this.els.table.addEventListener('mousemove', e => {
+
+
+                const percY = 1 - (window.innerHeight - e.clientY) / window.innerHeight;
+                const top = window.innerHeight - (-300 * percY + 300);
+
+                const left = (e.clientX - 600);
+
+                const percX = 1 - (window.innerWidth - e.clientX) / window.innerWidth;
+                const rotationRange = 14;
+                rotate = rotationRange * percX - (rotationRange / 2);
+
+                controller.setHandPosition(top, left, rotate)
+            });
+
+            this.render();
+        },
+
+        render() {
+
+            const numberOfCardsInHand = controller.getNumberOfCardsInHand();
+            const handPosition = controller.getHandPosition();
+            const dealtCards = controller.getDealtCards();
+
+            // calculate deck depth
+            this.els.deck_depth.style.top = (28 * ( numberOfCardsInHand / 52) - 28) + 'px';
+            this.els.deck_depth.style.right = (28 * (numberOfCardsInHand / 52) - 28) + 'px';
+
+            // hide deck depth if there are no more  cards
+            if (numberOfCardsInHand <= 1) this.els.deck.style.opacity = '0';
+
+            // move and rotate hand
+            this.els.hand.style.top =  handPosition.top + 'px';
+            this.els.hand.style.left = handPosition.left + 'px';
+            this.els.hand.style.transform = 'rotate(' + handPosition.rotate + 'deg)';
+
+            // throw any newly dealt cards
+            for (let card of dealtCards) {
+                if (!card.isDealt) {
+
+                    card.isDealt = true;
+
+                    const first = this.els.card.getBoundingClientRect();
+
+                    // offset card by width/height to center on cursor
+                    const lastX = card.x - first.width / 2;
+                    const lastY = card.y - first.height / 2;
+
+                    // place new card at x and y
+                    card.el.style.top = `${lastY}px`;
+                    card.el.style.left = `${lastX}px`;
+
+                    // calculate delta between card and new card
+                    const invertY = first.top - lastY;
+                    const invertX = first.left - lastX;
+
+                    // move new card ontop of card in hand
+                    card.el.style.transform = `translate(${invertX}px, ${invertY}px) rotate(${rotate}deg) scale(1)`;
+
+                    // put new card in dom
+                    this.els.table.appendChild(card.el);
+
+                    // undo transform, causing new card to move to cursors position
+                    // note: for some reason this raf does not wait for the next frame
+                    // adding a second raf does wait for the next frame
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            
+                            card.el.style.transform = `rotate(${rotate + Math.random() * 180}deg) scale(0.6)`;
+                        });
+                    });
+
+                    card.el.addEventListener('transitionend', () => {
+                        card.el.style.zIndex = '8';
+                    });
+                }
+            }
+        }
+    },
     
-    const percX = 1 - (window.innerWidth - e.clientX) / window.innerWidth;
-    const range = 14;
-    rotate = range * percX - (range/2);
+    cardCounter: {
 
-    requestAnimationFrame(() => {
-        hand.style.bottom =  bottom+'px';
-        hand.style.left = (e.clientX - 600) + 'px';
-        hand.style.transform = 'rotate('+rotate+'deg)';
-    });
+        init() {
+
+            this.card_counter = document.querySelector('.card-counter');
+            this.render();
+        },
+
+        render() {
+
+            this.card_counter.textContent = controller.getNumberOfCardsInHand();
+        }
+    }
 }
 
-function setNumberOfPlayers(num) {
+controller.init();
 
-    while(dealing_decks.firstChild) {
-        dealing_decks.removeChild(dealing_decks.firstChild);
-    }
+// function setNumberOfPlayers(num) {
 
-    for (let i = 0; i < num; i++) {
+//     while(dealing_decks.firstChild) {
+//         dealing_decks.removeChild(dealing_decks.firstChild);
+//     }
 
-        let deck = document.createElement('DIV');
-        deck.classList.add('table-overlay-dealing-deck');
+//     for (let i = 0; i < num; i++) {
+
+//         let deck = document.createElement('DIV');
+//         deck.classList.add('table-overlay-dealing-deck');
         
-        console.log(deck);
+//         console.log(deck);
 
-        dealing_decks.appendChild(deck);
-    }
+//         dealing_decks.appendChild(deck);
+//     }
 
     
-}
+// }
 
-setCards(cards);
-table.addEventListener('click', dealCard);
-table.addEventListener('mousemove', onMouseMove);
+// setCards(cards);
+// table.addEventListener('click', dealCard);
+// table.addEventListener('mousemove', onMouseMove);

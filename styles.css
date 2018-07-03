@@ -143,7 +143,7 @@ body {
 .dealt_card {
     position: absolute;
     height: 338px;
-    transition: transform 500ms linear;
+    transition: transform 500ms ease-out;
     z-index: 10;
 }
 .card-counter {
