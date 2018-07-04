@@ -10,6 +10,7 @@ var controller = {
 
         view.table.init();
         view.cardCounter.init();
+        view.hand.init();
     },
 
     getNumberOfCardsInHand() { return model.numberOfCardsInHand },
@@ -29,7 +30,7 @@ var controller = {
     setHandPosition(top = 0, left = 0, rotate = 0) {
 
         model.handPosition = { top, left, rotate };
-        view.table.render();      
+        view.hand.render();
     },
 
     getDealtCards() { return model.dealtCards },
@@ -58,7 +59,6 @@ var view = {
         els: {
             deck: document.querySelector('.deck'),
             hand: document.querySelector('.hand'),
-            deck_depth: document.querySelector('.deck-depth'),
             dealing_decks: document.querySelector('.table-overlay-dealing-decks'),
             card: document.querySelector('.card'),
             table: document.querySelector('.table'),
@@ -83,6 +83,7 @@ var view = {
         render() {
 
             const dealtCards = controller.getDealtCards();
+            const handPosition = controller.getHandPosition();
 
             // throw any newly dealt cards
             for (let card of dealtCards) {
@@ -105,7 +106,7 @@ var view = {
                     const invertX = first.left - lastX;
 
                     // move new card ontop of card in hand
-                    card.el.style.transform = `translate(${invertX}px, ${invertY}px) rotate(${rotate}deg) scale(1)`;
+                    card.el.style.transform = `translate(${invertX}px, ${invertY}px) rotate(${handPosition.rotate}deg) scale(1)`;
 
                     // put new card in dom
                     this.els.table.appendChild(card.el);
@@ -116,7 +117,7 @@ var view = {
                     requestAnimationFrame(() => {
                         requestAnimationFrame(() => {
                             
-                            card.el.style.transform = `rotate(${rotate + Math.random() * 180}deg) scale(0.6)`;
+                            card.el.style.transform = `rotate(${handPosition.rotate + Math.random() * 180}deg) scale(0.6)`;
                         });
                     });
 
@@ -134,6 +135,7 @@ var view = {
             table: document.querySelector('.table'),
             deck: document.querySelector('.deck'),
             hand: document.querySelector('.hand'),
+            deck_depth: document.querySelector('.deck-depth'),
         },
 
         init() {
@@ -147,10 +149,12 @@ var view = {
 
                 const percX = 1 - (window.innerWidth - e.clientX) / window.innerWidth;
                 const rotationRange = 14;
-                rotate = rotationRange * percX - (rotationRange / 2);
+                const rotate = rotationRange * percX - (rotationRange / 2);
 
-                controller.setHandPosition(top, left, rotate)
+                controller.setHandPosition(top, left, rotate);
             });
+
+            this.render();
         },
 
         render() {
