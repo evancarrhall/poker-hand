@@ -149,7 +149,7 @@ body {
 .card-counter {
     position: absolute;
     bottom: 25px;
-    right: 25px;
+    right: 30px;
     margin: 0;
     font-family: 'Quicksand', sans-serif;
     font-size: 34px;
