@@ -144,7 +144,10 @@ body {
     position: absolute;
     height: 338px;
     transition: transform 500ms ease-out;
+    /* animation: dealt_card_animation 500ms linear; */
     z-index: 10;
+    border-radius: 15px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 }
 .card-counter {
     position: absolute;
@@ -154,4 +157,19 @@ body {
     font-family: 'Quicksand', sans-serif;
     font-size: 34px;
     color: rgba(0, 0, 0, 0.3);
+}
+
+@keyframes dealt_card_animation {
+
+    0% {
+        box-shadow: none;
+    }
+
+    80% {
+        box-shadow: 0px 0px 25px 5px rgba(0,0,0,0);
+    }
+
+    100% {
+        box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+    }
 }

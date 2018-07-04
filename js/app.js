@@ -8,7 +8,7 @@ var controller = {
 
     init() {
 
-        view.table.init();
+        view.dealtCards.init();
         view.cardCounter.init();
         view.hand.init();
     },
@@ -22,7 +22,7 @@ var controller = {
         else {
             model.numberOfCardsInHand = numberOfCardsInHand;
             view.cardCounter.render();
-            view.table.render();
+            view.hand.render();
         }
     },
 
@@ -39,7 +39,7 @@ var controller = {
         // create new card el
         let new_card = document.createElement('IMG');
         new_card.classList.add('dealt_card');
-        new_card.src = "card.svg";
+        new_card.src = "assets/card.svg";
 
         model.dealtCards.push({
             x: x,
@@ -48,23 +48,23 @@ var controller = {
             isDealt: false
         });
 
-        view.table.render();
+        view.dealtCards.render();
     },
 }
 
 var view = {
 
-    table: {
+    dealtCards: {
 
         els: {
-            deck: document.querySelector('.deck'),
-            hand: document.querySelector('.hand'),
-            dealing_decks: document.querySelector('.table-overlay-dealing-decks'),
             card: document.querySelector('.card'),
             table: document.querySelector('.table'),
         },
 
         init() {
+
+            // keeps track of cards currently rendered on screen
+            this.renderedDealtCards = [];
 
             this.els.table.addEventListener('click', e => {
                 
@@ -87,9 +87,10 @@ var view = {
 
             // throw any newly dealt cards
             for (let card of dealtCards) {
-                if (!card.isDealt) {
 
-                    card.isDealt = true;
+                if (!this.renderedDealtCards.includes(card)) {
+
+                    this.renderedDealtCards.push(card);
 
                     const first = this.els.card.getBoundingClientRect();
 
@@ -118,6 +119,8 @@ var view = {
                         requestAnimationFrame(() => {
                             
                             card.el.style.transform = `rotate(${handPosition.rotate + Math.random() * 180}deg) scale(0.6)`;
+
+                            console.log(card.el.getBoundingClientRect());
                         });
                     });
 
@@ -175,6 +178,21 @@ var view = {
             this.els.hand.style.transform = 'rotate(' + handPosition.rotate + 'deg)';
         }
     },
+
+    deckDepth: {
+
+        els: {
+
+        },
+
+        init() {
+
+        },
+
+        render() {
+
+        }
+    },
     
     cardCounter: {
 
@@ -192,6 +210,7 @@ var view = {
 }
 
 controller.init();
+
 
 // function setNumberOfPlayers(num) {
 
@@ -211,7 +230,3 @@ controller.init();
 
     
 // }
-
-// setCards(cards);
-// table.addEventListener('click', dealCard);
-// table.addEventListener('mousemove', onMouseMove);
