@@ -38,15 +38,16 @@ var controller = {
 
         // create new card el
         let new_card = document.createElement('IMG');
-        new_card.classList.add('dealt_card');
+        new_card.classList.add('dealt-card');
         new_card.src = "assets/card.svg";
 
         model.dealtCards.push({
             x: x,
             y: y,
-            el: new_card,
-            isDealt: false
+            el: new_card
         });
+
+        console.log(`x: ${x}, y: ${y}`);
 
         view.dealtCards.render();
     },
@@ -58,7 +59,7 @@ var view = {
 
         els: {
             card: document.querySelector('.card'),
-            table: document.querySelector('.table'),
+            dealt_cards: document.querySelector('.dealt-cards'),
         },
 
         init() {
@@ -66,7 +67,7 @@ var view = {
             // keeps track of cards currently rendered on screen
             this.renderedDealtCards = [];
 
-            this.els.table.addEventListener('click', e => {
+            this.els.dealt_cards.addEventListener('click', e => {
                 
                 const numberOfCardsInHand = controller.getNumberOfCardsInHand();
 
@@ -80,7 +81,7 @@ var view = {
             this.render();
         },
 
-        render() {
+        render() { 
 
             const dealtCards = controller.getDealtCards();
             const handPosition = controller.getHandPosition();
@@ -110,7 +111,7 @@ var view = {
                     card.el.style.transform = `translate(${invertX}px, ${invertY}px) rotate(${handPosition.rotate}deg) scale(1)`;
 
                     // put new card in dom
-                    this.els.table.appendChild(card.el);
+                    this.els.dealt_cards.appendChild(card.el);
 
                     // undo transform, causing new card to move to cursors position
                     // note: for some reason this raf does not wait for the next frame
@@ -119,8 +120,6 @@ var view = {
                         requestAnimationFrame(() => {
                             
                             card.el.style.transform = `rotate(${handPosition.rotate + Math.random() * 180}deg) scale(0.6)`;
-
-                            console.log(card.el.getBoundingClientRect());
                         });
                     });
 
@@ -170,27 +169,12 @@ var view = {
             this.els.deck_depth.style.right = (28 * (numberOfCardsInHand / 52) - 28) + 'px';
 
             // hide deck depth if there are no more  cards
-            if (numberOfCardsInHand <= 1) this.els.deck.style.opacity = '0';
+            if (numberOfCardsInHand <= 0) this.els.deck.style.opacity = '0';
 
             // move and rotate hand
             this.els.hand.style.top =  handPosition.top + 'px';
             this.els.hand.style.left = handPosition.left + 'px';
             this.els.hand.style.transform = 'rotate(' + handPosition.rotate + 'deg)';
-        }
-    },
-
-    deckDepth: {
-
-        els: {
-
-        },
-
-        init() {
-
-        },
-
-        render() {
-
         }
     },
     
