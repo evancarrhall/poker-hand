@@ -34,6 +34,7 @@ var controller = {
     },
 
     getDealtCards() { return model.dealtCards },
+    getFlattenedDealtCards() { return [].concat.apply([], model.dealtCards) },
     dealCard(x, y) {
 
         // create new card el
@@ -41,13 +42,74 @@ var controller = {
         new_card.classList.add('dealt-card');
         new_card.src = "assets/card.svg";
 
-        model.dealtCards.push({
+        let card = {
             x: x,
             y: y,
             el: new_card
-        });
+        };
 
-        console.log(`x: ${x}, y: ${y}`);
+        if (model.dealtCards.length === 0) {
+
+            console.log('Created First Pile');
+            model.dealtCards.push([card]);
+        }
+        else {
+
+            let inRangePiles = [];
+            var newDealtCards = [];
+            model.dealtCards.forEach(pile => {
+
+                let isWithinRangeOfPile = pile.some(card => {
+                    
+                    let xd = x - card.x;
+                    let yd = y - card.y;
+                    let distance =  Math.sqrt(xd ** 2 + yd ** 2);
+
+                    let range = 150;
+                    let isWithinRangeOfCard = Boolean(distance < range);
+                    return isWithinRangeOfCard;
+                });
+
+                if (isWithinRangeOfPile) {
+
+                    inRangePiles.push(pile);
+                }
+                
+                else {
+
+                    newDealtCards.push(pile);
+                }
+            });
+
+            if (inRangePiles.length === 0) {
+                
+                newDealtCards.push([card]);
+                console.log('Created Pile');
+            }
+            else {
+    
+                // only matches one pile
+                if (inRangePiles.length === 1) {
+
+                    inRangePiles[0].push(card);
+                    newDealtCards.push(inRangePiles[0]);
+                    console.log(`Added to Pile: ${inRangePiles[0].length} in pile.`);
+                }
+
+                // matches multiple piles
+                else {
+
+                    let merged = [].concat.apply([], [...inRangePiles, card]);
+                    newDealtCards.push(merged);
+                    console.log(`Merged ${inRangePiles.length} piles: ${merged.length} in newly created pile.`);
+                }
+            }
+
+            model.dealtCards = newDealtCards;
+        }
+
+        // console.log(`x: ${x}, y: ${y}`);
+        // console.log(model.dealtCardsPiles);
 
         view.dealtCards.render();
     },
@@ -83,7 +145,7 @@ var view = {
 
         render() { 
 
-            const dealtCards = controller.getDealtCards();
+            const dealtCards = controller.getFlattenedDealtCards();
             const handPosition = controller.getHandPosition();
 
             // throw any newly dealt cards
