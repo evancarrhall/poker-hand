@@ -27,9 +27,9 @@ var controller = {
     },
 
     getHandPosition() { return model.handPosition },
-    setHandPosition(top = 0, left = 0, rotate = 0) {
+    setHandPosition(y = 0, x = 0, r = 0) {
 
-        model.handPosition = { top, left, rotate };
+        model.handPosition = { y, x, r };
         view.hand.render();
     },
 
@@ -65,8 +65,8 @@ var controller = {
                     let yd = y - card.y;
                     let distance =  Math.sqrt(xd ** 2 + yd ** 2);
 
-                    let range = 150;
-                    let isWithinRangeOfCard = Boolean(distance < range);
+                    let maximumDistance = 170;
+                    let isWithinRangeOfCard = Boolean(distance < maximumDistance);
                     return isWithinRangeOfCard;
                 });
 
@@ -170,7 +170,7 @@ var view = {
                     const invertX = first.left - lastX;
 
                     // move new card ontop of card in hand
-                    card.el.style.transform = `translate(${invertX}px, ${invertY}px) rotate(${handPosition.rotate}deg) scale(1)`;
+                    card.el.style.transform = `translate(${invertX}px, ${invertY}px) rotate(${handPosition.r}deg) scale(1)`;
 
                     // put new card in dom
                     this.els.dealt_cards.appendChild(card.el);
@@ -181,7 +181,7 @@ var view = {
                     requestAnimationFrame(() => {
                         requestAnimationFrame(() => {
                             
-                            card.el.style.transform = `rotate(${handPosition.rotate + Math.random() * 180}deg) scale(0.6)`;
+                            card.el.style.transform = `rotate(${handPosition.r + Math.random() * 180}deg) scale(0.6)`;
                         });
                     });
 
@@ -207,15 +207,15 @@ var view = {
             this.els.table.addEventListener('mousemove', e => {
 
                 const percY = 1 - (window.innerHeight - e.clientY) / window.innerHeight;
-                const top = window.innerHeight - (-300 * percY + 300);
+                const y = 100 * percY - 100;
 
-                const left = (e.clientX - 600);
+                const x = e.clientX;
 
                 const percX = 1 - (window.innerWidth - e.clientX) / window.innerWidth;
                 const rotationRange = 14;
-                const rotate = rotationRange * percX - (rotationRange / 2);
+                const r = rotationRange * percX - (rotationRange / 2);
 
-                controller.setHandPosition(top, left, rotate);
+                controller.setHandPosition(y, x, r);
             });
 
             this.render();
@@ -234,9 +234,7 @@ var view = {
             if (numberOfCardsInHand <= 0) this.els.deck.style.opacity = '0';
 
             // move and rotate hand
-            this.els.hand.style.top =  handPosition.top + 'px';
-            this.els.hand.style.left = handPosition.left + 'px';
-            this.els.hand.style.transform = 'rotate(' + handPosition.rotate + 'deg)';
+            this.els.hand.style.transform = `translate(${handPosition.x}px, ${handPosition.y}px) rotate(${handPosition.r}deg)`;
         }
     },
     
