@@ -1,7 +1,9 @@
 var model = {
-    numberOfCardsInHand: 52,
+    numberOfCardsInHand: 26,
     handPosition: { top: window.innerHeight, left: 0, rotate: 0 },
     dealtCards: [],
+    gameStartTimestamp: null,
+    numberOfDecksToDeal: Math.floor(Math.random() * 5) + 3,
 };
 
 var controller = {
@@ -12,6 +14,7 @@ var controller = {
         cardCounter.init();
         hand.init();
         dealtCardsCounters.init();
+        header.init();
     },
 
     getNumberOfCardsInHand() { return model.numberOfCardsInHand },
@@ -58,8 +61,9 @@ var controller = {
         if (model.dealtCards.length === 0) {
             
             model.dealtCards.push([card]);
+            model.gameStartTimestamp = new Date();
             console.log('Created First Pile');
-        
+            
         }
         else {
 
@@ -123,6 +127,14 @@ var controller = {
         dealtCards.render();
         dealtCardsCounters.render();
     },
+
+    getNumberOfDecksToDeal() { return model.numberOfDecksToDeal },
+    setNumberOfDecksToDeal(num) {
+
+        model.numberOfDecksToDeal = num;
+
+        header.render();
+    }
 }
 
 var dealtCards = {
@@ -238,9 +250,8 @@ var hand = {
         const numberOfCardsInHand = controller.getNumberOfCardsInHand();
         const handPosition = controller.getHandPosition();
 
-        // calculate deck depth
-        this.els.deck_depth.style.top = (28 * ( numberOfCardsInHand / 52) - 28) + 'px';
-        this.els.deck_depth.style.right = (28 * (numberOfCardsInHand / 52) - 28) + 'px';
+        let distance = numberOfCardsInHand / 2;
+        this.els.deck_depth.style.transform = `translate(${-distance}px, ${-distance}px)`;
 
         // hide deck depth if there are no more  cards
         if (numberOfCardsInHand <= 0) this.els.deck.style.opacity = '0';
@@ -263,9 +274,9 @@ var cardCounter = {
 
     shake() {
 
-        this.els.card_counter.classList.add('animated', 'headShake');
+        this.els.card_counter.classList.add('animated', 'flash');
         this.els.card_counter.addEventListener('animationend', () => {
-            this.els.card_counter.classList.remove('animated', 'headShake');
+            this.els.card_counter.classList.remove('animated', 'flash');
         });
     },
 
@@ -314,7 +325,6 @@ var dealtCardsCounters = {
         // add a counter for any new piles
         for (let pile of dealtCards) {
             if (!newRenderedCounters.map(counter => counter.pile).includes(pile)) {
-                console.log(pile);
 
                 let el = document.createElement('DIV');
                 el.classList.add('pile-counter');
@@ -333,6 +343,23 @@ var dealtCardsCounters = {
         }
 
         this.renderedCounters = newRenderedCounters;
+    }
+}
+
+var header = {
+
+    els: {
+        header: document.querySelector('.header')
+    },
+
+    init() {
+
+        this.render();
+    },
+
+    render() {
+
+        this.els.header.textContent = `Deal ${controller.getNumberOfDecksToDeal()} even decks`;
     }
 }
 

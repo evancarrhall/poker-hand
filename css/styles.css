@@ -81,10 +81,10 @@ body {
 
 .deck-depth {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -23px;
+    right: -10px;
     width: 210px;
-    transition: all 0.2s ease;
+    transition: all 50ms linear;
 }
 
 .card {
@@ -165,7 +165,7 @@ body {
     align-items: center;
     font-weight: 600;
     transform: translate(-50%, -50%);
-    animation: pile-counter-anim 100ms ease-in 0ms 1;
+    animation: pile-counter-anim 150ms ease-in 0ms 1;
 }
 @keyframes pile-counter-anim {
     from {
@@ -174,4 +174,16 @@ body {
     to {
         transform: translate(-50%, -50%) scale(1);
     }
+}
+.header {
+    position: absolute;
+    top: 10%;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 40px;
+    color: rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    text-transform: uppercase;
+}
+.card-counter.animated.flash {
+    animation-duration: 700ms;
 }
